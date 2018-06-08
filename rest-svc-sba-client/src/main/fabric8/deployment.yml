@@ -9,13 +9,15 @@ spec:
     spec:
       containers:
         - env:
+            - name: SERVER_PORT
+              value: ${servicePort}
             - name: SPRING_BOOT_ADMIN_CLIENT_ENABLED
               value: true
             - name: SPRING_BOOT_ADMIN_CLIENT_URL
               value: http://spring-boot-admin-server:8989
             - name: SPRING_BOOT_ADMIN_CLIENT_INSTANCE_PREFER-IP
               value: true
-            - name: SPRING_BOOT_ADMIN_CLIENT_INSTANCE_METADATA_RUNS-ON-K8S-POD
+            - name: SPRING_BOOT_ADMIN_CLIENT_INSTANCE_METADATA_RUNS_ON_K8S_POD
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
@@ -39,16 +41,21 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.serviceAccountName
+#  specify the named port to use in the service creation resource fragment: ('http' is already in use)
+          ports:
+          - containerPort: ${servicePort}
+            name: http2
+            protocol: TCP
           livenessProbe:
             httpGet:
               path: /actuator/health/
-              port: 8080
+              port: ${servicePort}
             initialDelaySeconds: 10
             periodSeconds: 5
           readinessProbe:
             httpGet:
               path: /actuator/health/
-              port: 8080
+              port: ${servicePort}
             initialDelaySeconds: 10
             periodSeconds: 5
             successThreshold: 1

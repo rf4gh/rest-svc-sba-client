@@ -24,6 +24,8 @@
 		<java.version>1.8</java.version>
 		<codecentric.boot.admin.version>2.0.1-SNAPSHOT</codecentric.boot.admin.version>
 		<fabric8.mvn.version>3.5.37</fabric8.mvn.version>
+		<!-- ====== This is the service port number to use in K8s : ==== -->
+		<servicePort>8081</servicePort>
 	</properties>
 
 	<dependencies>
