@@ -1,0 +1,5 @@
+# resource fragment for creation of NodePort service instread of ClusterIP
+spec:
+  type: NodePort
+  selector:
+    app: rest-svc-sba-client

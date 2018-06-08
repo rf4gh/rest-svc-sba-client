@@ -1,0 +1,55 @@
+# Fabric8 resource fragment 
+# http://maven.fabric8.io/#resource-fragments
+#
+# we want to specify env vars pointing to the SBA server + the liveness/readiness probe URI's for K8s
+spec:
+# Not working: replicas
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - env:
+            - name: SPRING_BOOT_ADMIN_CLIENT_ENABLED
+              value: true
+            - name: SPRING_BOOT_ADMIN_CLIENT_URL
+              value: http://spring-boot-admin-server:8989
+            - name: SPRING_BOOT_ADMIN_CLIENT_INSTANCE_PREFER-IP
+              value: true
+            - name: SPRING_BOOT_ADMIN_CLIENT_INSTANCE_METADATA_RUNS-ON-K8S-POD
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: MY_POD_SERVICE_ACCOUNT
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.serviceAccountName
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 5
